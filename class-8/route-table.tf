@@ -1,0 +1,24 @@
+resource "aws_route_table" "fiap_route_table" {
+  vpc_id = aws_vpc.vpc-fiap.id
+
+  route {
+    cidr_block = var.cidr_block
+    # gateway_id = aws_internet_gateway.internet_gateway.id
+    gateway_id = "local"
+  }
+
+  #   route {
+  #     ipv6_cidr_block        = "::/0"
+  #     egress_only_gateway_id = aws_egress_only_internet_gateway.example.id
+  #   }
+
+  tags = {
+    Name = "example"
+  }
+}
+
+resource "aws_route_table_association" "fiap_route_table_association" {
+  count          = length(aws_subnet.public_subnet)
+  subnet_id      = aws_subnet.public_subnet[count.index].id
+  route_table_id = aws_route_table.fiap_route_table.id
+}
