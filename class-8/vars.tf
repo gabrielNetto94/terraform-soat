@@ -20,3 +20,9 @@ variable "availability_zones" {
   ]
   type = list(string)
 }
+
+variable "instance_type" {
+  description = "The EC2 instance type for the EKS node group"
+  default     = ["t3.micro"]
+  type = list(string)
+}

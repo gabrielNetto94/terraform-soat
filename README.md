@@ -2,7 +2,12 @@ terraform init
 
 terraform plan
 
+terraform destroy
+
 terraform apply
+
+terraform validate
+
 
 
 // if you change the bucket name, you need to reconfigure the backend
