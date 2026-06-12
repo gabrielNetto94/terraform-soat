@@ -14,6 +14,7 @@ resource "aws_eks_cluster" "fiap-eks-cluster" {
       aws_subnet.public_subnet[1].id,
       # aws_subnet.public_subnet[2].id,
     ]
+     security_group_ids = [aws_security_group.sg.id]
   }
 
   # Ensure that IAM Role permissions are created before and deleted
