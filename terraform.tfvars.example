@@ -1,0 +1,10 @@
+# terraform.tfvars.example — Copie para terraform.tfvars e preencha os valores
+# ⚠️ NUNCA faça commit do arquivo terraform.tfvars com valores reais!
+# Alternativamente, exporte: export TF_VAR_rds_password="sua_senha"
+
+# Senha do RDS PostgreSQL (mínimo 8 caracteres)
+rds_password = "SUA_SENHA_SEGURA_AQUI"
+
+# Opcional: sobrescrever outros defaults
+# rds_db_name  = "techchallengedb"
+# rds_username = "postgres"
