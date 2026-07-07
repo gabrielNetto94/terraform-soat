@@ -21,11 +21,19 @@ resource "aws_security_group" "rds_sg" {
   vpc_id      = aws_vpc.vpc-fiap.id
 
   ingress {
-    description     = "PostgreSQL from EKS nodes"
+    description     = "PostgreSQL from EKS nodes (SG declarado no Terraform)"
     from_port       = 5432
     to_port         = 5432
     protocol        = "tcp"
     security_groups = [aws_security_group.sg.id]
+  }
+
+  ingress {
+    description = "PostgreSQL from EKS managed node SG (criado automaticamente pelo EKS)"
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.vpc-fiap.cidr_block] # permite toda a VPC (10.0.0.0/16)
   }
 
   egress {
@@ -44,18 +52,18 @@ resource "aws_security_group" "rds_sg" {
 
 # --- RDS Instance (Free Tier elegível) ----------------------------------------
 resource "aws_db_instance" "postgres" {
-  identifier = "${var.project_name}-db"
+  identifier = "${var.project_name}db"
 
   # Engine
   engine         = "postgres"
   engine_version = "16.14"
 
   # Free Tier: db.t3.micro + 20 GB gp2 + single-AZ
-  instance_class        = "db.t3.micro"
-  allocated_storage     = 20
-  storage_type          = "gp2"
-  multi_az              = false   # single-AZ → free tier
-  publicly_accessible   = false   # acesso apenas via VPC (pelos nodes EKS)
+  instance_class      = "db.t3.micro"
+  allocated_storage   = 20
+  storage_type        = "gp2"
+  multi_az            = false # single-AZ → free tier
+  publicly_accessible = false # acesso apenas via VPC (pelos nodes EKS)
 
   # Banco de dados inicial
   db_name  = var.rds_db_name
@@ -67,9 +75,9 @@ resource "aws_db_instance" "postgres" {
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
 
   # Backup mínimo (free tier)
-  backup_retention_period = 1       # 1 dia de backup automático
-  skip_final_snapshot     = true    # ⚠️ apenas para ambientes de teste
-  deletion_protection     = false   # ⚠️ apenas para ambientes de teste
+  backup_retention_period = 1     # 1 dia de backup automático
+  skip_final_snapshot     = true  # ⚠️ apenas para ambientes de teste
+  deletion_protection     = false # ⚠️ apenas para ambientes de teste
 
   # Performance Insights desativado (não é free tier)
   performance_insights_enabled = false

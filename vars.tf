@@ -42,4 +42,9 @@ variable "rds_password" {
   description = "Senha master do RDS PostgreSQL — defina via TF_VAR_rds_password ou terraform.tfvars"
   type        = string
   sensitive   = true
+
+  validation {
+    condition     = can(regex("^[^/@\" ]+$", var.rds_password)) && length(var.rds_password) >= 8
+    error_message = "A senha do RDS deve ter no mínimo 8 caracteres e NÃO pode conter: / @ \" (aspas duplas) ou espaços."
+  }
 }
